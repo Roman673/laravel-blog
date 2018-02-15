@@ -4,6 +4,14 @@
 
 @section('content')
 <div class="container mt-3">
+	<nav aria-label="breadcrumb">
+  	<ol class="breadcrumb">
+    	<li class="breadcrumb-item"><a href="{{ route('index') }}">Home</a></li>
+    	<li class="breadcrumb-item"><a href="{{ route('posts.index') }}">Posts</a></li>
+    	<li class="breadcrumb-item"><a href="{{ route('posts.show', $post->id) }}">{{ $post->title }}</a></li>
+    	<li class="breadcrumb-item active" aria-current="page">Edit</li>
+  	</ol>
+	</nav>
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card card-default">

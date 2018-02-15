@@ -4,6 +4,12 @@
 
 @section('content')
 <div class="container">
+	<nav aria-label="breadcrumb">
+  	<ol class="breadcrumb">
+    	<li class="breadcrumb-item"><a href="{{ route('index') }}">Home</a></li>
+    	<li class="breadcrumb-item active" aria-current="page">Posts</li>
+  	</ol>
+	</nav>
   @forelse ($posts as $post)
   <div class="row">
     <div class="col-8">

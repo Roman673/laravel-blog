@@ -4,6 +4,13 @@
 
 @section('content')
 <div class="container">
+	<nav aria-label="breadcrumb">
+  	<ol class="breadcrumb">
+    	<li class="breadcrumb-item"><a href="{{ route('index') }}">Home</a></li>
+    	<li class="breadcrumb-item"><a href="{{ route('posts.index') }}">Posts</a></li>
+    	<li class="breadcrumb-item active" aria-current="page">{{ $post->title }}</li>
+  	</ol>
+	</nav>
   <div class="row">
     <div class="col-8">
       <h2 class="display-4 mb-0">{{ $post->title }}</h2>

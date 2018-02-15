@@ -15,7 +15,7 @@
 
   <style>
     h1, h2 { font-family: serif;}
-    a { font-size: 1.2rem; }
+    a, li { font-size: 1.2rem; }
     p { font-size: 1.3rem; }
     @yield('style')
   </style>

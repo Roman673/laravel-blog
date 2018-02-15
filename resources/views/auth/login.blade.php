@@ -4,6 +4,12 @@
 
 @section('content')
 <div class="container">
+  <nav aria-lavel="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ route('index') }}">Home</a></li>
+      <li class="breadcrumb-item active">Login</li>
+    </ol>
+  </nav>
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card card-default">
