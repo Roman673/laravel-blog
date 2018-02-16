@@ -11,14 +11,12 @@
   	</ol>
 	</nav>
   @forelse ($posts as $post)
-  <div class="card mb-3">
-    <div class="card-body">
-      <h2 class="card-title mb-0"><a href="{{ route('posts.show', $post->id) }}">{{ $post->title }}</a></h2>
-    </div>
-    <div class="card-footer text-muted">
-      @date($post->created_at)
-      <i>&#x2022;</i>
-      <i class="fa fa-comment"></i> {{ $post->comments->count() }}
+  <div class="row">
+    <div class="col-8">
+      <h2 class="display-4 mb-0">{{ $post->title }}</h2>
+      <p class="text-muted"><small>@date($post->created_at) by {{ $post->user->name }}</small></p>
+      {!! $post->body !!}
+      <p><a class="btn btn-primary" href="{{ route('posts.show', $post->id) }}">Read more &raquo;</a>
     </div>
   </div>
   @empty

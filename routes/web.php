@@ -1,23 +1,19 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 use App\Post;
+use Illuminate\Auth\Middleware\Authenticate;
 
-Route::get('/', function () {
-    return view('index')->with('posts', Post::all());
-})->name('index');
+Route::get('/', 'IndexController')->name('index');
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('/posts', 'PostController');
+
+Route::resource('/comments', 'CommentController', ['except' => [
+    'index', 'Show', 'create', 'store',
+]]);
+
+Route::post('/posts/{post}/comment-add', 'CommentController@store')
+    ->name('comments.store');

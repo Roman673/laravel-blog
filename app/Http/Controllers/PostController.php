@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Comment;
 use App\Post;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth', ['except' => [
+            'index', 'show',
+        ]]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -47,7 +56,7 @@ class PostController extends Controller
         $post->save();
 
         return redirect()
-            ->route('posts.index')
+            ->route('posts.show', $post->id)
             ->with('success', 'Post created');
     }
 
@@ -59,7 +68,10 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return view('posts.show')->with('post', $post);
+        return view('posts.show', [
+            'post' => $post,
+            'comments' => $post->comments,
+        ]);
     }
 
     /**
@@ -70,7 +82,13 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        return view('posts.edit')->with('post', $post);
+        if (Auth::id() == $post->user_id) {
+            return view('posts.edit')->with('post', $post);
+        } else {
+            return redirect()
+                ->route('posts.show', $post->id)
+                ->with('error', 'Unauthorized Page'); 
+        }
     }
 
     /**
@@ -82,18 +100,24 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        $this->validate($request, [
-            'title' => 'required|max:191',
-            'body' => 'required',
-        ]);
+        if (Auth::id() == $post->user_id) {
+            $this->validate($request, [
+                'title' => 'required|max:191',
+                'body' => 'required',
+            ]);
 
-        $post->title = $request->input('title');
-        $post->body = $request->input('body');
-        $post->save();
+            $post->title = $request->input('title');
+            $post->body = $request->input('body');
+            $post->save();
 
-        return redirect()
-            ->route('posts.show', $post->id)
-            ->with('success', 'Post updated');
+            return redirect()
+                ->route('posts.show', $post->id)
+                ->with('success', 'Post updated');
+        } else {
+            return redirect()
+                ->route('posts.show', $post->id)
+                ->with('error', 'Unauthorized Page'); 
+        }
     }
 
     /**
@@ -104,10 +128,15 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        $post->delete();
-
-        return redirect()
-            ->route('posts.index')
-            ->with('success', 'Post deleted');
+        if (Auth::id() == $post->user_id) {
+            $post->delete();
+            return redirect()
+                ->route('posts.index')
+                ->with('success', 'Post deleted');
+        } else {
+            return redirect()
+                ->route('posts.show', $post->id)
+                ->with('error', 'Unauthorized Page'); 
+        }
     }
 }

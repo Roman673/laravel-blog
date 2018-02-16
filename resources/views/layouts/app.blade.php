@@ -12,11 +12,12 @@
 
   <!-- Styles -->
   <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <style>
-    h1, h2 { font-family: serif;}
-    a, li { font-size: 1.2rem; }
-    p { font-size: 1.3rem; }
+    h1, h2, h3 { font-family: serif;}
+    h2 { font-size: 2.1rem; }
+    a, li, p { font-size: 1.2rem; }
     @yield('style')
   </style>
 </head>

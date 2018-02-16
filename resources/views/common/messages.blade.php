@@ -17,7 +17,7 @@
 
 @if (session('error'))
   <div class="alert alert-danger alert-dismissabel fade show">
-    <strong>Success!</strong> {{ session('error') }}
+    <strong>Danger!</strong> {{ session('error') }}
     <button class="close" type="button" data-dismiss="alert" aria-label="Close">&times;</button>
   </div>
 @endif
