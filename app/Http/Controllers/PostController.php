@@ -136,7 +136,7 @@ class PostController extends Controller
         } else {
             return redirect()
                 ->route('posts.show', $post->id)
-                ->with('error', 'Unauthorized Page'); 
+                ->with('error', 'Unauthorized Page');
         }
     }
 }

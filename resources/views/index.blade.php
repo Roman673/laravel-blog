@@ -17,17 +17,24 @@
 <div class="container">
   <!-- Example row of columns -->
   <div class="row">
+  <div class="card-columns">
     @foreach ($posts as $post)
-    <div class="col-md-4">
-      <h2>{{ $post->title }}</h2>
-      {!! $post->body !!}
-      <p>
-        <a class="btn btn-secondary" href="{{ route('posts.show', $post->id) }}" role="button">
-          View details &raquo;
-        </a>
-      </p>
+    <div class="card">
+      <div class="card-header">
+        <small class="text-muted">Last updated at @date($post->updated_at)</small>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">{{ $post->title }}</h5>
+        <div class"card-text">{!! $post->body !!}</div>
+        <p class="card-text">
+          <a class="btn btn-secondary" href="{{ route('posts.show', $post->id) }}" role="button">
+            View details &raquo;
+          </a>
+        </p>
+      </div>
     </div>
     @endforeach
+  </div> <!-- /.card-coluns -->
   </div> <!-- /row -->
 
   <hr>

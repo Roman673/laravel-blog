@@ -7,13 +7,11 @@ Route::get('/', 'IndexController')->name('index');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
 
 Route::resource('/posts', 'PostController');
 
 Route::resource('/comments', 'CommentController', ['except' => [
-    'index', 'Show', 'create', 'store',
+    'index', 'Show', 'create',
 ]]);
 
-Route::post('/posts/{post}/comment-add', 'CommentController@store')
-    ->name('comments.store');

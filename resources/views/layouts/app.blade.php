@@ -17,29 +17,28 @@
   <style>
     h1, h2, h3 { font-family: serif;}
     h2 { font-size: 2.1rem; }
-    a, li, p { font-size: 1.2rem; }
+    a, p, li, th, td { font-size: 1.2rem; }
     @yield('style')
   </style>
 </head>
 <body>
-  @include('common.navbar')
+@include('common.navbar')
+@include('common.messages')
 
-  @include('common.messages')
-
-  <main>
-    @yield('content')
-  </main>
+<main>
+  @yield('content')
+</main>
   
-  <footer class="container">
-    <hr>
-    <p><small>&copy; Roman Lisicyn 2018</small></p>
-  </footer>
+<footer class="container text-center">
+  <hr>
+  <p><small>&copy; Roman Lisicyn 2018</small></p>
+</footer>
 
-  <!-- Scripts -->
-  <script src="{{ asset('js/app.js') }}"></script>
-  <script src="/vendor/unisharp/laravel-ckeditor/ckeditor.js"></script>
-  <script>
-      CKEDITOR.replace('ckeditor');
-  </script>
+<!-- Scripts -->
+<script src="{{ asset('js/app.js') }}"></script>
+<script src="/vendor/unisharp/laravel-ckeditor/ckeditor.js"></script>
+<script>
+  CKEDITOR.replace('ckeditor');
+</script>
 </body>
 </html>

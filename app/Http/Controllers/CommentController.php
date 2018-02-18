@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Comment;
 use App\Post;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
@@ -48,11 +50,13 @@ class CommentController extends Controller
 
         $comment = new Comment;
         $comment->body = $request->input('body');
-        $comment->post_id = $post->id;
+        $comment->post_id = $request->input('post_id');
         $comment->user_id = $request->user()->id;
         $comment->save();
 
-        return redirect()->route('posts.show', $post->id);
+        return redirect()
+            ->route('posts.show', $request->input('post_id'))
+            ->with('success', 'Comment created');
     }
 
     /**
@@ -95,8 +99,19 @@ class CommentController extends Controller
      * @param  \App\Comment  $comment
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Comment $comment)
+    public function destroy(Request $request, Comment $comment)
     {
-        //
+        $post_id = $request->input('_post_id');
+
+        if (Auth::id() == $comment->user_id) {
+            $comment->delete();
+            return redirect()
+                ->route('posts.show', $post_id)
+                ->with('success', 'Comment deleted');
+        } else {
+            return redirect()
+                ->route('posts.show', $post_id)
+                ->with('error', 'Unauthorized Page');
+        }
     }
 }
