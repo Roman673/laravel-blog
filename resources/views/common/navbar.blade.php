@@ -4,7 +4,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <a class="navbar-brand" href="{{ url('/') }}">
-      {{ config('app.name', 'Laravel') }}
+      {{ config('app.name', 'Blog') }}
     </a>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -15,6 +15,9 @@
         </li>
         <li class="nav-item">
           <a class="nav-link @if(Route::currentRouteName() == 'posts.index') active @endif" href="{{ route('posts.index') }}">Posts</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link @if(Route::currentRouteName() == 'tags.index') active @endif" href="{{ route('tags.index') }}">Tags</a>
         </li>
       </ul>
 

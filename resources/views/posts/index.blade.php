@@ -16,6 +16,9 @@
       Created at @date($post->created_at) by {{ $post->user->name }}
     </div>
     <div class="card-body">
+      @foreach($post->tags as $tag)
+        <span class="badge badge-{{ $tag->status }}">{{ $tag->name }}</span>
+      @endforeach
       <h2 class="card-title mb-0"><a href="{{ route('posts.show', $post->id) }}">{{ $post->title }}</a></h2>
     </div>
     <div class="card-footer text-muted">

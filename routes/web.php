@@ -15,3 +15,7 @@ Route::resource('/comments', 'CommentController', ['except' => [
     'index', 'Show', 'create',
 ]]);
 
+Route::resource('/tags', 'TagController');
+
+Route::get('/posts/tag/{tag}', 'PostController@sortByTag')
+    ->name('posts.sortByTag');

@@ -21,6 +21,28 @@
             @csrf
             @method('PUT')
             <div class="form-group">
+              <label for="tags" ><b>Status</b></label>
+              <select id="tags" class="form-control" name="tags[]" multiple>
+                @if(count($post->tags) == 0)
+                  @foreach($tags as $tag)
+                    <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                  @endforeach
+                @else
+                  @foreach ($tags as $tag)
+                    @foreach ($post->tags as $selected_tag)
+                      @if ($tag->id == $selected_tag->id)
+                        <option value="{{ $tag->id }}" selected>{{ $tag->name }}</option>
+                        @break
+                      @elseif ($loop->last)
+                        <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                      @endif
+                    @endforeach
+                  @endforeach
+                @endif
+              </select>
+            </div> <!-- /.form-group -->
+
+            <div class="form-group">
               <label for="title"><b>Title</b></label>
               <input id="title" class="form-control{{ $errors->has('title') ? ' is-invalid' : ''}}" type="text" name="title" value="{{ $post->title }}" required autofocus>
               @if ($errors->has('title'))

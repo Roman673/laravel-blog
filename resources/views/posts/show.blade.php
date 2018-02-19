@@ -62,6 +62,9 @@
         </div>
       </div>
       <hr>
+      @foreach($post->tags as $tag)
+        <span class="badge badge-{{ $tag->status }}">{{ $tag->name }}</span>
+      @endforeach
       <h2 class="mb-0">{{ $post->title }}</h2>
       <p class="text-muted">@date($post->created_at) by {{ $post->user->name }}</p>
       <div class="text-justify">{!! $post->body !!}</div>

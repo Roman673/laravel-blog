@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Comment;
 use App\Post;
+use App\Tag;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,7 @@ class PostController extends Controller
     public function __construct()
     {
         $this->middleware('auth', ['except' => [
-            'index', 'show',
+            'index', 'show', 'sortByTag',
         ]]);
     }
     /**
@@ -33,7 +34,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('posts.create');
+        return view('posts.create')->with('tags', Tag::all());
     }
 
     /**
@@ -54,6 +55,8 @@ class PostController extends Controller
         $post->body = $request->input('body');
         $post->user_id = $request->user()->id;
         $post->save();
+
+        $post->tags()->attach($request->input('tags'));
 
         return redirect()
             ->route('posts.show', $post->id)
@@ -83,7 +86,10 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         if (Auth::id() == $post->user_id) {
-            return view('posts.edit')->with('post', $post);
+            return view('posts.edit', [
+                'post' => $post,
+                'tags' => Tag::all(),
+            ]);
         } else {
             return redirect()
                 ->route('posts.show', $post->id)
@@ -109,6 +115,9 @@ class PostController extends Controller
             $post->title = $request->input('title');
             $post->body = $request->input('body');
             $post->save();
+
+            $post->tags()->detach();
+            $post->tags()->attach($request->input('tags'));
 
             return redirect()
                 ->route('posts.show', $post->id)
@@ -138,5 +147,10 @@ class PostController extends Controller
                 ->route('posts.show', $post->id)
                 ->with('error', 'Unauthorized Page');
         }
+    }
+    
+    public function sortByTag(Tag $tag)
+    {
+        return view('posts.index')->with('posts', $tag->posts()->paginate(1));
     }
 }
