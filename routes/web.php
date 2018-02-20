@@ -19,3 +19,5 @@ Route::resource('/tags', 'TagController');
 
 Route::get('/posts/tag/{tag}', 'PostController@sortByTag')
     ->name('posts.sortByTag');
+Route::get('/posts/{post}/liked', 'PostController@liked')->name('posts.liked');
+Route::get('/posts/{post}/disliked', 'PostController@disliked')->name('posts.disliked');

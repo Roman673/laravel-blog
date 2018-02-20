@@ -24,6 +24,10 @@
     <div class="card-footer text-muted">
       <i class="fa fa-comment"></i> {{ $post->comments->count() }}
       <i>&#x2022;</i>
+      <i class="fa fa-thumbs-o-up"></i> {{ $post->likes }}
+      <i>&#x2022;</i>
+      <i class="fa fa-thumbs-o-down"></i> {{ $post->dislikes }}
+      <i>&#x2022;</i>
     </div>
   </div>
   @empty

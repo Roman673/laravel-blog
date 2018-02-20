@@ -18,6 +18,7 @@
     h1, h2, h3 { font-family: serif;}
     h2 { font-size: 2.1rem; }
     a, p, li, th, td { font-size: 1.2rem; }
+    a:hover { text-decoration: none; }
     @yield('style')
   </style>
 </head>

@@ -69,7 +69,23 @@
       <p class="text-muted">@date($post->created_at) by {{ $post->user->name }}</p>
       <div class="text-justify">{!! $post->body !!}</div>
       <hr>
-
+      <a href="{{ route('posts.liked', $post->id) }}" style="color:black">
+        @if ($is_liked)
+          <i class="fa fa-thumbs-up"></i>
+        @else
+          <i class="fa fa-thumbs-o-up"></i>
+        @endif
+        {{ $post->likes }}
+      </a>&nbsp;&nbsp;
+      <a href="{{ route('posts.disliked', $post->id) }}" style="color:black">
+        @if ($is_disliked)
+          <i class="fa fa-thumbs-down"></i>
+        @else
+          <i class="fa fa-thumbs-o-down"></i>
+        @endif
+        {{ $post->dislikes }}
+      </a>
+      <br><br>
       <p>{{ $post->comments->count() }} Comments</p>
       @auth
       <!-- Comment Create -->
