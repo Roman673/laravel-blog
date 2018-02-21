@@ -6,6 +6,7 @@ use App\Comment;
 use App\Like;
 use App\Post;
 use App\Tag;
+use App\View;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -70,8 +71,22 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post)
+    public function show(Request $request, Post $post)
     {
+        $view = View::where('post_id', $post->id)
+                    ->where('visitor', $request->ip())
+                    ->first();
+
+        if (!$view) {
+            $current_view = new View;
+            $current_view->post_id = $post->id;
+            $current_view->visitor = $request->ip();
+            $current_view->save();
+
+            $post->views++;
+            $post->save();
+        }
+
         $is_liked = false;
         $is_disliked = false;
 
@@ -150,12 +165,12 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $post)
+    public function destroy(Request $request, Post $post)
     {
         if (Auth::id() == $post->user_id) {
             $post->delete();
-            return redirect()
-                ->route('posts.index')
+
+            return redirect($request->input('redirectTo'))
                 ->with('success', 'Post deleted');
         } else {
             return redirect()

@@ -18,7 +18,8 @@
           <img src="{{ Gravatar::src($post->user->email) }}" width="40" class="rounded-circle" alt="Gavatar">
         </div>
         <div class="col-10">
-          <div class="h3">{{ $post->user->name }}</div>
+          <div class="h4 mb-0">{{ $post->user->name }}</div>
+          <div class="text-muted">Published on {{ $post->created_at }}</div>
         </div>
         <div class="col-1">
 				@auth
@@ -29,34 +30,12 @@
   					</a>
   					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
       				<a class="dropdown-item" href="{{ route('posts.edit', $post->id) }}">Update</a>
-							<button type="button" class="dropdown-item" data-toggle="modal" data-target="#delete">
+							<button type="button" class="dropdown-item" data-toggle="modal" data-target="#postDelete{{ $post->id }}">
   							Delete
 							</button>
   					</div>
 					</div> <!-- /.dropdown --> 
-		      <div class="modal fade" id="delete" tabindex="-1" role="dialog">
-    		    <div class="modal-dialog" role="document">
-        		  <div class="modal-content">
-            		<div class="modal-header">
-		              <h5 class="modal-title">Deleting Post</h5>
-    		          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        		        <span aria-hidden="true">&times;</span>
-            		  </button>
-		            </div>
-    		        <div class="modal-body">
-        		      <p>Are you sure you want to delete post {{ $post->title }}?</p>
-            		</div>
-		            <div class="modal-footer">
-    		          <form action="{{ route('posts.destroy', $post->id) }}" method="post">
-        		        @csrf
-            		    @method('DELETE')
-                		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-		                <button type="submit" class="btn btn-danger">Delete post</button>
-    		          </form>
-        		    </div>
-		          </div>
-    		    </div>
-		      </div> <!-- /.modal -->
+          @include('common.postDelete', ['redirectTo' => 'posts'])
 					@endif
 				@endauth
         </div>
@@ -66,7 +45,7 @@
         <span class="badge badge-{{ $tag->status }}">{{ $tag->name }}</span>
       @endforeach
       <h2 class="mb-0">{{ $post->title }}</h2>
-      <p class="text-muted">@date($post->created_at) by {{ $post->user->name }}</p>
+      <p class="text-muted">{{ $post->views }} views</p>
       <div class="text-justify">{!! $post->body !!}</div>
       <hr>
       <a href="{{ route('posts.liked', $post->id) }}" style="color:black">
@@ -112,37 +91,14 @@
             <p class="text-muted"><small>{{ $comment->created_at }}</small></p>
             <p>{{ $comment->body }}</p>
 						@auth
-						@if (Auth::user()->id == $comment->user_id)
-            <!-- Comment delete -->
-            <button class="btn btn-sm btn-outline-danger" type="button" data-toggle="modal" data-target="#commentDelete{{ $comment->id }}">
-							Comment delete
-						</button>
-						<!-- Modal -->
-						<div class="modal fade" id="commentDelete{{ $comment->id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-			  			<div class="modal-dialog" role="document">
-			    			<div class="modal-content">
-			      			<div class="modal-header">
-			        			<h5 class="modal-title" id="modalLabel">Deleting comment</h5>
-			        			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			          			<span aria-hidden="true">&times;</span>
-      			  			</button>
-			      			</div>
-						      <div class="modal-body">
-            			  <p>Are you sure you want to delete comment?</p>
-			      			</div>
-						      <div class="modal-footer">
-            				<form action="{{ route('comments.destroy', $comment->id) }}" method="post">
-			              	@csrf
-      			        	@method('DELETE')
-            			  	<input type="hidden" name="_post_id" value="{{ $post->id }}">
-						        	<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      			        	<button class="btn btn-danger" type="submit">Delete comment</button>
-            				</form>
-						      </div>
-						    </div>
-						  </div>
-						</div> <!-- /.modal -->
-						@endif
+						  @if (Auth::user()->id == $comment->user_id)
+              <!-- Comment delete -->
+              <button class="btn btn-sm btn-outline-danger" type="button" data-toggle="modal" data-target="#commentDelete{{ $comment->id }}">
+							  Comment delete
+						  </button>
+						  <!-- Modal -->
+              @include('common.commentDelete', ['redirectTo' => 'posts/'.$post->id])
+						  @endif
 						@endauth
           </div>
         </div>

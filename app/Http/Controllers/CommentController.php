@@ -101,16 +101,14 @@ class CommentController extends Controller
      */
     public function destroy(Request $request, Comment $comment)
     {
-        $post_id = $request->input('_post_id');
-
         if (Auth::id() == $comment->user_id) {
             $comment->delete();
-            return redirect()
-                ->route('posts.show', $post_id)
-                ->with('success', 'Comment deleted');
+
+            return redirect($request->input('redirectTo'))
+                    ->with('success', 'Comment deleted');
         } else {
             return redirect()
-                ->route('posts.show', $post_id)
+                ->route('posts.index')
                 ->with('error', 'Unauthorized Page');
         }
     }
