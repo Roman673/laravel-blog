@@ -20,9 +20,6 @@
   <div class="card-columns">
     @foreach ($posts as $post)
     <div class="card">
-      <div class="card-header">
-        <small class="text-muted">Last updated at @date($post->updated_at)</small>
-      </div>
       <div class="card-body">
         @foreach($post->tags as $tag)
           <span class="btn btn-sm btn-outline-{{ $tag->status }} mb-2">{{ $tag->name }}</span>
@@ -34,6 +31,9 @@
             View details &raquo;
           </a>
         </p>
+      </div>
+      <div class="card-footer">
+        <small class="text-muted">Last updated at @date($post->updated_at)</small>
       </div>
     </div>
     @endforeach
