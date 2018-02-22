@@ -183,9 +183,10 @@ class PostController extends Controller
     {
         return view('posts.index')->with('posts', $tag->posts()->paginate(1));
     }
-
-    public function liked(Post $post)
+    
+    public function like(Request $request)
     {
+        $post = Post::findOrFail($request->input('post_id'));
         $record = Like::firstOrCreate([
             'post_id' => $post->id,
             'user_id' => Auth::id(),
@@ -209,9 +210,10 @@ class PostController extends Controller
 
         return redirect()->route('posts.show', $post->id);
     }
-
-    public function disliked(Post $post) 
+    
+    public function dislike(Request $request) 
     {
+        $post = Post::findOrFail($request->input('post_id'));
         $record = Like::firstOrCreate([
             'post_id' => $post->id,
             'user_id' => Auth::id(),

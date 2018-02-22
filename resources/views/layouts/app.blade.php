@@ -41,5 +41,8 @@
 <script>
   CKEDITOR.replace('ckeditor');
 </script>
+<script>
+  @yield('script')
+</script>
 </body>
 </html>
