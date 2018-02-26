@@ -24,10 +24,18 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index(Request $request) {
+        // Checking the existence of a query
+        if ($request->input('q')) {
+            $q = $request->input('q');
+            $posts = Post::where('title', 'like', '%'.$q.'%')
+                           ->paginate(1);
+        } else {
+            $posts = Post::paginate(3);
+        }
+        
         return view('posts.index', [
-            'posts' => Post::paginate(3),
+            'posts' => $posts,
             'title' => 'Posts',
         ]);
     }
@@ -186,7 +194,7 @@ class PostController extends Controller
                 ->with('error', 'Unauthorized Page');
         }
     }
-    
+        
     public function sortByTag(Tag $tag)
     {
         return view('posts.index')->with('posts', $tag->posts()->paginate(1));

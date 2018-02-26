@@ -7,7 +7,7 @@
 
 @section('content')
 <section class="row">
-  <article class="col-8">
+  <article class="col-md-8">
         <div class="row">
           <div class="col-1">
             <img src="{{ Gravatar::src($post->user->email) }}" width="40" class="rounded-circle" alt="Gavatar">
@@ -96,8 +96,8 @@
       </div>
     </div>   
     @empty
-    <div class="card">
-      <div class="card-body">
+    <div class="card border-info">
+      <div class="card-body text-info">
         <p class="card-text">Comments Lists is Empty</p>
       </div>
     </div>
@@ -116,7 +116,7 @@
     </form>
 
   </article> <!-- /.col-8 -->
-  <aside class="col-4">
+  <aside class="col-md-4">
     @include('common.sidebar')
   </aside>
 </section> <!-- /.row -->

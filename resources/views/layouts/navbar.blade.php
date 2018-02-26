@@ -1,6 +1,5 @@
-  <div class="container">
 <nav class="navbar navbar-expand-md navbar-light bg-white">
-
+  <div class="container">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -21,7 +20,12 @@
           <a class="nav-link @if(Route::currentRouteName() == 'tags.index') active @endif" href="{{ route('tags.index') }}">Tags</a>
         </li>
       </ul>
-
+    
+      <form action="{{ route('posts.index') }}" method="get" class="form-inline my-2 my-lg-0">
+        <input name="q" class="form-control mr-sm-2" value="{{ Request::input('q') }}" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
+      </form>
+      
       <!-- Right Side Of Navbar -->
       <ul class="navbar-nav ml-auto">
       <!-- Authentication Links -->
@@ -55,7 +59,5 @@
         @endguest
       </ul>
     </div>
-
-</nav>
   </div>
-
+</nav>
