@@ -8,40 +8,27 @@
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
-  <title>{{ config('app.name', 'Blog') }} | @yield('title')</title>
+  <title>{{ config('app.name', 'Blog') }} | {{ $title }}</title>
 
-  <!-- Styles -->
-  <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-  <style>
-    h1, h2, h3 { font-family: serif;}
-    a, p, li { font-size: 1.2rem; }
-    a:hover { text-decoration: none; }
-    @yield('style')
-  </style>
+  @include('layouts.styles')
 </head>
-<body>
-@include('common.navbar')
-@include('common.messages')
+<body class="bg-white">
+<header>
+  @include('layouts.navbar')
 
-<main>
+  @if (Request::path() != '/')
+    @include('layouts.breadcrumbs')
+  @endif
+</header>
+
+<main class="container">
+  @include('layouts.messages')
+    
   @yield('content')
 </main>
-  
-<footer class="container text-center">
-  <hr>
-  <p><small>&copy; Roman Lisicyn 2018</small></p>
-</footer>
 
-<!-- Scripts -->
-<script src="{{ asset('js/app.js') }}"></script>
-<script src="/vendor/unisharp/laravel-ckeditor/ckeditor.js"></script>
-<script>
-  CKEDITOR.replace('ckeditor');
-</script>
-<script>
-  @yield('script')
-</script>
+@include('layouts.footer')  
+
+@include('layouts.scripts')
 </body>
 </html>

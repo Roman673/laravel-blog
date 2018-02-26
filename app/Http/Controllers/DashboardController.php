@@ -24,11 +24,13 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        
-        return view('dashboard')
-            ->with('liked_posts', Like::where('user_id', auth()->user()->id)
-                                        ->whereRaw('is_liked = 1 or is_disliked = 1')
-                                        ->get()
-            );
+        $liked_posts = Like::where('user_id', auth()->user()->id)
+                            ->whereRaw('is_liked = 1 or is_disliked = 1')
+                            ->get()
+                            
+        return view('dashboard', [
+            'liked_posts' => $liked_posts,
+            'title' => 'Home Page',
+        );
     }
 }

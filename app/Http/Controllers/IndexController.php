@@ -10,6 +10,9 @@ class IndexController extends Controller
 {
     public function __invoke()
     {
-        return view('index', ['posts' => Post::all()]);
+        return view('index', [
+            'posts' => Post::all(),
+            'title' => 'Index Page',
+        ]);
     }
 }

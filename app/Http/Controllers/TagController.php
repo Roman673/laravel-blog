@@ -20,7 +20,10 @@ class TagController extends Controller
      */
     public function index()
     {
-        return view('tags.index')->with('tags', Tag::all());
+        return view('tags.index', [
+            'tags' => Tag::all(),
+            'title' => 'Tags',
+        ]);
     }
 
     /**
@@ -41,7 +44,10 @@ class TagController extends Controller
             'dark',
         ];
 
-        return view('tags.create')->with('statuses', $statuses);
+        return view('tags.create', [
+            'statuses' => $statuses,
+            'title' => 'Creating tag',
+        ]);
     }
 
     /**

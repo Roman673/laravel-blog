@@ -14,3 +14,6 @@ yarn-error.log
 
 # Vim swap files
 *.swp
+
+# Geany project files
+*.geany

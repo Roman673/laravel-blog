@@ -1,24 +1,17 @@
 @extends('layouts.app')
 
-@section('title', 'Index Page')
-
-@section('style')
-  p { font-size: 0.9rem; }
-@endsection
-
 @section('content')
-  <div class="container">
 <div class="jumbotron bg-dark text-light">
-    <h1 class="display-3">Hello, world!</h1>
-    <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
-		<p class="lead"><a class="text-light" href="#" role="button">Learn more &raquo;</a></p>
-  </div>
+  <h1 class="display-3">Hello, world!</h1>
+  <p>
+    Sit dolorum dicta quod culpa magnam placeat, pariatur sunt. Dignissimos dolor reprehenderit animi suscipit ipsam. Doloremque molestiae perferendis sunt fugit molestias? Repellendus esse possimus labore quo pariatur? Amet aperiam officiis est mollitia animi autem vitae adipisci tempora expedita debitis placeat.
+  </p>
+	<p class="lead"><a class="text-light" href="#" role="button">Learn more &raquo;</a></p>
 </div>
-<div class="container">
-  <!-- Example row of columns -->
-  <div class="row">
-  <div class="card-columns">
-    @foreach ($posts as $post)
+
+<!-- Example row of columns -->
+<div class="card-columns">
+  @foreach ($posts as $post)
     <div class="card">
       <div class="card-body">
         @foreach($post->tags as $tag)
@@ -37,10 +30,5 @@
       </div>
     </div>
     @endforeach
-  </div> <!-- /.card-coluns -->
-  </div> <!-- /row -->
-
-  <hr>
-
-</div> <!-- /container -->
+</div> <!-- /.card-coluns -->
 @endsection

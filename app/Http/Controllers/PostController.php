@@ -26,7 +26,10 @@ class PostController extends Controller
      */
     public function index()
     {
-        return view('posts.index')->with('posts', Post::paginate(3));
+        return view('posts.index', [
+            'posts' => Post::paginate(3),
+            'title' => 'Posts',
+        ]);
     }
 
     /**
@@ -36,7 +39,10 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('posts.create')->with('tags', Tag::all());
+        return view('posts.create', [
+            'tags' => Tag::all(),
+            'title' => 'Creating post',
+        ]);
     }
 
     /**
@@ -104,6 +110,7 @@ class PostController extends Controller
             'comments' => $post->comments,
             'is_liked' => $is_liked,
             'is_disliked' => $is_disliked,
+            'title' => $post->title,
         ]);
     }
 
@@ -119,6 +126,7 @@ class PostController extends Controller
             return view('posts.edit', [
                 'post' => $post,
                 'tags' => Tag::all(),
+                'title' => "Edit $post->title",
             ]);
         } else {
             return redirect()
