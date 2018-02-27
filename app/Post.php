@@ -8,12 +8,12 @@ class Post extends Model
 {
     protected $fillable = ['title', 'body'];
     
-    public function comments()
+    public function comment_set()
     {
         return $this->hasMany('App\Comment');
     }
 
-    public function likes()
+    public function like_set()
     {
         return $this->hasMany('App\Like');
     }

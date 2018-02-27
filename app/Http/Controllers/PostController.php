@@ -13,10 +13,18 @@ use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
+    private static $paginate = 3; 
+
     public function __construct()
     {
         $this->middleware('auth', ['except' => [
-            'index', 'show', 'sortByTag',
+            'index',
+            'show',
+            'sortByTag',
+            'orderByCreated',
+            'orderByViews',
+            'orderByLikes',
+            'orderByComments',
         ]]);
     }
     /**
@@ -29,9 +37,10 @@ class PostController extends Controller
         if ($request->input('q')) {
             $q = $request->input('q');
             $posts = Post::where('title', 'like', '%'.$q.'%')
-                           ->paginate(1);
+                           ->orderBy('title', 'asc')
+                           ->paginate(self::$paginate);
         } else {
-            $posts = Post::paginate(3);
+            $posts = Post::orderBy('title', 'asc')->paginate(self::$paginate);
         }
         
         return view('posts.index', [
@@ -115,7 +124,6 @@ class PostController extends Controller
 
         return view('posts.show', [
             'post' => $post,
-            'comments' => $post->comments,
             'is_liked' => $is_liked,
             'is_disliked' => $is_disliked,
             'title' => $post->title,
@@ -197,9 +205,40 @@ class PostController extends Controller
         
     public function sortByTag(Tag $tag)
     {
-        return view('posts.index')->with('posts', $tag->posts()->paginate(1));
+        return view('posts.index', [
+            'posts' => $tag->posts()->paginate(self::$paginate),
+            'title' => 'Sort by Tag'.' '.$tag->name,
+        ]);
     }
     
+    public function orderByCreated() {
+        return view('posts.index', [
+            'posts' => Post::orderBy('created_at', 'desc')->paginate(self::$paginate),
+            'title' => 'Order by Created Date',
+        ]);
+    }
+
+    public function orderByViews() {
+        return view('posts.index', [
+            'posts' => Post::orderBy('views', 'desc')->paginate(self::$paginate),
+            'title' => 'Order by Views',
+        ]);
+    }
+
+    public function orderByLikes() {
+        return view('posts.index', [
+            'posts' => Post::orderBy('likes', 'desc')->paginate(self::$paginate),
+            'title' => 'Order by Likes',
+        ]);
+    }
+
+    public function orderByComments() {
+        return view('posts.index', [
+            'posts' => Post::orderByDesc('comments')->paginate(self::$paginate),
+            'title' => 'Order by Comments',
+        ]);
+    }
+
     public function like(Request $request)
     {
         $post = Post::findOrFail($request->input('post_id'));

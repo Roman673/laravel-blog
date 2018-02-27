@@ -42,20 +42,29 @@ class CommentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Post $post)
+    public function store(Request $request)
     {
         $this->validate($request, [
             'body' => 'required',
         ]);
 
+        // Getting post_id from request
+        $post_id = $request->input('post_id');
+
+        // Add comment
         $comment = new Comment;
         $comment->body = $request->input('body');
-        $comment->post_id = $request->input('post_id');
+        $comment->post_id = $post_id;
         $comment->user_id = $request->user()->id;
         $comment->save();
 
+        // Gettin post and increment comments counter
+        $post = Post::findOrFail($post_id);
+        $post->comments++;
+        $post->save();
+
         return redirect()
-            ->route('posts.show', $request->input('post_id'))
+            ->route('posts.show', $post_id)
             ->with('success', 'Comment created');
     }
 
@@ -102,6 +111,13 @@ class CommentController extends Controller
     public function destroy(Request $request, Comment $comment)
     {
         if (Auth::id() == $comment->user_id) {
+            
+            // Getting post and decriment comments counter
+            $post = $comment->post;
+            $post->comments--;
+            $post->save();
+
+            // Deleting comment
             $comment->delete();
 
             return redirect($request->input('redirectTo'))

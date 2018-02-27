@@ -29,70 +29,67 @@
           </div>
         </div>
     
-        @foreach($post->tags as $tag)
-          <span class="badge badge-{{ $tag->status }}">{{ $tag->name }}</span>
-        @endforeach
         <h1 class="mb-0">{{ $post->title }}</h1>
-        <h3 class="mb-2 text-muted">{{ $post->views }} views</h3>
+        <div class="h3 mb-2 text-muted">{{ $post->views }} views</div>
         <p>{!! $post->body !!}</p>      
 
-        <br>
-        <span id="like" style="font-size:24px;" 
-        @if ($is_liked)
-          class="fa fa-thumbs-up"
-        @else
-          class="fa fa-thumbs-o-up"
-        @endif
-        > {{ $post->likes }}</span>
+        <div class="d-flex w-100 justify-content-between">
+          <div>
+            @foreach($post->tags as $tag)
+              <span style="font-size:18px" class="badge badge-{{ $tag->status }}">{{ $tag->name }}</span>
+            @endforeach
+          </div>
+          <div>
+            <span id="like" style="font-size:24px;" 
+              @if ($is_liked) class="fa fa-thumbs-up" @else class="fa fa-thumbs-o-up" @endif>
+              {{ $post->likes }}
+            </span>
 
-        &nbsp;&nbsp;
+            &nbsp;&nbsp;
 
-        <span id="dislike" style="font-size:24px;"
-        @if ($is_disliked)
-          class="fa fa-thumbs-down"
-        @else
-          class="fa fa-thumbs-o-down"
-        @endif
-        > {{ $post->dislikes }}</span>
+            <span id="dislike" style="font-size:24px;"
+              @if ($is_disliked) class="fa fa-thumbs-down" @else class="fa fa-thumbs-o-down" @endif>
+              {{ $post->dislikes }}
+            </span>
 
-        <form id="like-form" method="post" action="{{ route('posts.like') }}" style="display:none;">
-          @csrf
-          <input type="hidden" name="post_id" value="{{ $post->id }}">
-        </form>
-        <form id="dislike-form" method="post" action="{{ route('posts.dislike') }}" style="display:none;">
-          @csrf
-          <input type="hidden" name="post_id" value="{{ $post->id }}">
-        </form>
+            <form id="like-form" method="post" action="{{ route('posts.like') }}" style="display:none;">
+              @csrf
+              <input type="hidden" name="post_id" value="{{ $post->id }}">
+            </form>
+            <form id="dislike-form" method="post" action="{{ route('posts.dislike') }}" style="display:none;">
+              @csrf
+              <input type="hidden" name="post_id" value="{{ $post->id }}">
+            </form>
+          </div>
+        </div>
           
     <br><br>
     
     {{-- Display comments --}}
-    <p><span class="fa fa-comments"> {{ $post->comments->count() }} Comments</span></p>
-    @forelse ($comments as $comment)
-    <div class="card">
-      <div class="card-header">
+    <p><span class="fa fa-comments"> {{ $post->comments }} Comments</span></p>
+    @forelse ($post->comment_set as $comment)
+    <div class="card mb-3">
+      <div class="card-body">
         <div class="row">
           <div class="col-1">
             <img src="{{ Gravatar::src($comment->user->email) }}" width="40" class="rounded-circle" alt="Gravatar">
           </div>
-          <div class="col-8">
+          <div class="col-9">
             <h5 class="card-title">{{ $comment->user->name }}</h5>
             <h6 class="card-subtitle text-muted mb-2">Published on {{ $comment->created_at }}</h6>
+            <p class="card-text">{{ $comment->body }}</p>
           </div>
-          <div class="col-3">
+          <div class="col-2">
             @auth
               @if (Auth::user()->id == $comment->user_id)
                 <button class="btn btn-sm btn-outline-danger" type="button" data-toggle="modal" data-target="#commentDelete{{ $comment->id }}">
-                  Comment delete
+                  Delete
                 </button>
                 @include('common.commentDelete', ['redirectTo' => 'posts/'.$post->id])
               @endif
             @endauth
           </div>
         </div>
-      </div>
-      <div class="card-body">
-        <p class="card-text">{{ $comment->body }}</p>
       </div>
     </div>   
     @empty
