@@ -17,6 +17,10 @@ class CreatePostsTable extends Migration
             $table->increments('id');
             $table->string('title')->unique();
             $table->text('body')->nullable();
+            $table->integer('likes')->unsigned()->default(0);
+            $table->integer('dislikes')->unsigned()->default(0);
+            $table->integer('views')->unsigned()->default(0);
+            $table->integer('comments')->unsigned()->default(0);
             $table->timestamps();
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')

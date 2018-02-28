@@ -1,10 +1,5 @@
 @extends('layouts.app')
 
-@section('breadcrumb')
-<li class="breadcrumb-item"><a href="{{ route('posts.index') }}">Posts</a></li>
-<li class="breadcrumb-item active" aria-current="page">Creating post</li>
-@endsection
-
 @section('content')
 <section class="row">
   <div class="col-md-8">

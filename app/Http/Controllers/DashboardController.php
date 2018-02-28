@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Dislike;
 use App\Like;
+
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -22,15 +24,16 @@ class DashboardController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        $liked_posts = Like::where('user_id', auth()->user()->id)
-                            ->whereRaw('is_liked = 1 or is_disliked = 1')
-                            ->get();
-                            
+    public function index() {
         return view('dashboard', [
-            'liked_posts' => $liked_posts,
+            // Get all posts with an authorized user's likes
+            'liked_posts' => Like::where('user_id', auth()->user()->id)->get(),
+            // Get all posts wiht an authorized user's dislikes
+            'disliked_posts' => Dislike::where('user_id', auth()->user()->id)->get(),
             'title' => 'Home Page',
+            'breadcrumbs' => [
+                ['Dashboard', ''],
+            ],
         ]);
     }
 }

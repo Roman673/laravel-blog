@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddForeignToComments extends Migration
+class CreateDislikesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,18 @@ class AddForeignToComments extends Migration
      */
     public function up()
     {
-        Schema::table('comments', function (Blueprint $table) {
+        Schema::create('dislikes', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('post_id')->unsigned();
+            $table->integer('user_id')->unsigned();
+            $table->timestamps();
             $table->foreign('post_id')
                 ->references('id')
                 ->on('posts')
+                ->onDelete('cascade');
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
                 ->onDelete('cascade');
         });
     }
@@ -28,8 +36,6 @@ class AddForeignToComments extends Migration
      */
     public function down()
     {
-        Schema::table('commetns', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('dislikes');
     }
 }

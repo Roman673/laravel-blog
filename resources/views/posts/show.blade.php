@@ -1,67 +1,62 @@
 @extends('layouts.app')
 
-@section('breadcrumb')
-<li class="breadcrumb-item"><a href="{{ route('posts.index') }}">Posts</a></li>
-<li class="breadcrumb-item active" aria-current="page">{{ $post->title }}</li>
-@endsection
-
 @section('content')
 <section class="row">
   <article class="col-md-8">
-        <div class="row">
-          <div class="col-1">
-            <img src="{{ Gravatar::src($post->user->email) }}" width="40" class="rounded-circle" alt="Gavatar">
-          </div>
-          <div class="col-7">
-            <h5>{{ $post->user->name }}</h5>
-            <h6 class="mb-2 text-muted">Published on {{ $post->created_at }}</h6>
-          </div>
-          <div class="col-4">
-            @auth
-              @if (Auth::user()->id == $post->user_id)
-                <a class="btn btn-outline-warning m-0" href="{{ route('posts.edit', $post->id) }}">Update</a>
-                <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#postDelete{{ $post->id }}">
-                  Delete
-                </button>
-                @include('common.postDelete', ['redirectTo' => 'posts'])
-              @endif
-            @endauth
-          </div>
-        </div>
+    <div class="row">
+      <div class="col-1">
+        <img src="{{ Gravatar::src($post->user->email) }}" width="40" class="rounded-circle" alt="Gavatar">
+      </div>
+      <div class="col-7">
+        <h5>{{ $post->user->name }}</h5>
+        <h6 class="mb-2 text-muted">Published on {{ $post->created_at }}</h6>
+      </div>
+      <div class="col-4">
+        @auth
+          @if (Auth::user()->id == $post->user_id)
+            <a class="btn btn-outline-warning m-0" href="{{ route('posts.edit', $post->id) }}">Update</a>
+            <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#postDelete{{ $post->id }}">
+              Delete
+            </button>
+            @include('common.postDelete', ['redirectTo' => 'posts'])
+          @endif
+        @endauth
+      </div>
+    </div>
     
-        <h1 class="mb-0">{{ $post->title }}</h1>
-        <div class="h3 mb-2 text-muted">{{ $post->views }} views</div>
-        <p>{!! $post->body !!}</p>      
+    <h1 class="mb-0">{{ $post->title }}</h1>
+    <div class="h3 mb-2 text-muted">{{ $post->views }} views</div>
+    <p>{!! $post->body !!}</p>      
 
-        <div class="d-flex w-100 justify-content-between">
-          <div>
-            @foreach($post->tags as $tag)
-              <span style="font-size:18px" class="badge badge-{{ $tag->status }}">{{ $tag->name }}</span>
-            @endforeach
-          </div>
-          <div>
-            <span id="like" style="font-size:24px;" 
-              @if ($is_liked) class="fa fa-thumbs-up" @else class="fa fa-thumbs-o-up" @endif>
-              {{ $post->likes }}
-            </span>
+    <div class="d-flex w-100 justify-content-between">
+      <div>
+        @foreach($post->tags as $tag)
+          <span style="font-size:18px" class="badge badge-{{ $tag->status }}">{{ $tag->name }}</span>
+        @endforeach
+      </div>
+      <div>
+        <span id="like" style="font-size:24px;" 
+          @if ($is_liked) class="fa fa-thumbs-up" @else class="fa fa-thumbs-o-up" @endif>
+          {{ $post->likes }}
+        </span>
 
-            &nbsp;&nbsp;
+        &nbsp;&nbsp;
 
-            <span id="dislike" style="font-size:24px;"
-              @if ($is_disliked) class="fa fa-thumbs-down" @else class="fa fa-thumbs-o-down" @endif>
-              {{ $post->dislikes }}
-            </span>
+        <span id="dislike" style="font-size:24px;"
+          @if ($is_disliked) class="fa fa-thumbs-down" @else class="fa fa-thumbs-o-down" @endif>
+          {{ $post->dislikes }}
+        </span>
 
-            <form id="like-form" method="post" action="{{ route('posts.like') }}" style="display:none;">
-              @csrf
-              <input type="hidden" name="post_id" value="{{ $post->id }}">
-            </form>
-            <form id="dislike-form" method="post" action="{{ route('posts.dislike') }}" style="display:none;">
-              @csrf
-              <input type="hidden" name="post_id" value="{{ $post->id }}">
-            </form>
-          </div>
-        </div>
+        <form id="like-form" method="post" action="{{ route('posts.like') }}" style="display:none;">
+          @csrf
+          <input type="hidden" name="post_id" value="{{ $post->id }}">
+        </form>
+        <form id="dislike-form" method="post" action="{{ route('posts.dislike') }}" style="display:none;">
+          @csrf
+          <input type="hidden" name="post_id" value="{{ $post->id }}">
+        </form>
+      </div>
+    </div>
           
     <br><br>
     

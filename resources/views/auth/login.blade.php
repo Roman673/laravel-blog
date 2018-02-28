@@ -1,10 +1,7 @@
 @extends('layouts.app')
 
 <?php $title = 'Login'; ?>
-
-@section('breadcrumb')
-<li class="breadcrumb-item active">Login</li>
-@endsection
+<?php $breadcrumbs = [['Login', ''],]; ?>
 
 @section('content')
 <section class="row">

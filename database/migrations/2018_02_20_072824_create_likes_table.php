@@ -17,8 +17,6 @@ class CreateLikesTable extends Migration
             $table->increments('id');
             $table->integer('post_id')->unsigned();
             $table->integer('user_id')->unsigned();
-            $table->boolean('is_liked')->default(false);
-            $table->boolean('is_disliked')->default(false);
             $table->timestamps();
             $table->foreign('post_id')
                 ->references('id')

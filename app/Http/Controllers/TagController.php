@@ -23,6 +23,9 @@ class TagController extends Controller
         return view('tags.index', [
             'tags' => Tag::all(),
             'title' => 'Tags',
+            'breadcrumbs' => [
+                ['Tags', ''],
+            ],
         ]);
     }
 
@@ -47,6 +50,10 @@ class TagController extends Controller
         return view('tags.create', [
             'statuses' => $statuses,
             'title' => 'Creating tag',
+            'breadcrumbs' => [
+                ['Tags', '/tags'],
+                ['Creating tag', ''],
+            ],
         ]);
     }
 

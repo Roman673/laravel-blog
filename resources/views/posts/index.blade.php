@@ -1,11 +1,5 @@
 @extends('layouts.app')
 
-@section('title', 'Posts')
-
-@section('breadcrumb')
-<li class="breadcrumb-item active" aria-current="page">Posts</li>
-@endsection
-
 @section('content')
 <section class="row">
   <div class="col-md-8">

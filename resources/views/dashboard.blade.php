@@ -1,9 +1,5 @@
 @extends('layouts.app')
 
-@section('breadcrumb')
-<li class="breadcrumb-item active">Dashboard</li>
-@endsection
-
 @section('content')
 <section class="row">
   <div class="col-md-2">
@@ -33,6 +29,11 @@
               Liked posts
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" id="disliked-tab" data-toggle="tab" href="#disliked" aria-controls="disliked" aria-selected="false">
+              Disliked posts
+            </a>
+          </li>
         </ul>  
       </div>
 
@@ -55,12 +56,12 @@
                 <tr>
                   <th scope="col">ID</th>
                   <th scope="col">Title</th>
-                  <th scope="col">Created at</th>
-                  <th scope="col">Updated at</th>
                   <th scope="col"><i class="fa fa-comment"></i></th>
                   <th scope="col"><i class="fa fa-eye"></i></th>
                   <th scope="col"><i class="fa fa-thumbs-up"></i></th>
                   <th scope="col"><i class="fa fa-thumbs-down"></i></th>
+                  <th scope="col">Created at</th>
+                  <th scope="col">Updated at</th>
                   <th scope="col">Update</th>
                   <th scope="col">Delete</th>
                 </tr>
@@ -70,12 +71,12 @@
                 <tr>
                   <th scope="row">{{ $post->id }}</th>
                   <td><a href="{{ route('posts.show', $post->id) }}">{{ $post->title }}</a></td>
-                  <td>{{ $post->created_at }}</td>
-                  <td>{{ $post->updated_at }}</td>
-                  <td>{{ $post->comments->count() }}</td>
+                  <td>{{ $post->comments }}</td>
                   <td>{{ $post->views }}</td>
                   <td>{{ $post->likes }}</td>
                   <td>{{ $post->dislikes }}</td>
+                  <td>{{ $post->created_at }}</td>
+                  <td>{{ $post->updated_at }}</td>
                   <td>
                     <a class="btn btn-sm btn-outline-warning" href="{{ route('posts.edit', $post->id) }}">
                       Update
@@ -139,7 +140,6 @@
                   <tr>
                     <th scope="col">#</th>
                     <th scope="col">Title</th>
-                    <th scope="col">Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -151,15 +151,31 @@
                         {{ $liked->post->title }}
                       </a>
                     </td>
+                  </tr>
+                @endforeach
+                </tbody>
+              </table>
+            @else
+              <h5 class="card-title">You do not have any liked/disliked posts</h5>
+            @endif
+          </div> <!-- /.tab-pane -->
+          <div id="disliked" class="tab-pane fade" aria-labelledby="disliked-tab">
+            @if (count($disliked_posts) > 0)
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Title</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach ($disliked_posts as $disliked)
+                  <tr>
+                    <th scope="row">{{ $loop->iteration }}</th>
                     <td>
-                      <i
-                        @if ($liked->is_liked)
-                          class="fa fa-thumbs-up"
-                        @elseif ($liked->is_disliked)
-                          class="fa fa-thumbs-down"
-                        @endif
-                      >
-                      </i>
+                      <a href="{{ route('posts.show', $disliked->post->id) }}">
+                        {{ $disliked->post->title }}
+                      </a>
                     </td>
                   </tr>
                 @endforeach

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Dislike;
 use App\Comment;
 use App\Like;
 use App\Post;
@@ -46,6 +47,9 @@ class PostController extends Controller
         return view('posts.index', [
             'posts' => $posts,
             'title' => 'Posts',
+            'breadcrumbs' => [
+                ['Posts', ''],
+            ],
         ]);
     }
 
@@ -59,6 +63,9 @@ class PostController extends Controller
         return view('posts.create', [
             'tags' => Tag::all(),
             'title' => 'Creating post',
+            'breadcrumbs' => [
+                ['Creating post', ''],
+            ],
         ]);
     }
 
@@ -101,25 +108,19 @@ class PostController extends Controller
                     ->first();
 
         if (!$view) {
-            $current_view = new View;
-            $current_view->post_id = $post->id;
-            $current_view->visitor = $request->ip();
-            $current_view->save();
-
+            View::create(['post_id' => $post->id, 'visitor' => $request->ip()]);
             $post->views++;
             $post->save();
         }
 
-        $is_liked = false;
-        $is_disliked = false;
+        $is_liked = 0;
+        $is_disliked = 0;
 
         if (Auth::check()) {
-            $record = Like::where('post_id', $post->id)
-                          ->where('user_id', Auth::id())->first();
-            if ($record) {
-                $is_liked = $record->is_liked;
-                $is_disliked = $record->is_disliked;
-            }
+            $is_liked = Like::where('post_id', $post->id)
+                          ->where('user_id', Auth::id())->count();
+            $is_disliked = Dislike::where('post_id', $post->id)
+                          ->where('user_id', Auth::id())->count();
         }
 
         return view('posts.show', [
@@ -127,6 +128,10 @@ class PostController extends Controller
             'is_liked' => $is_liked,
             'is_disliked' => $is_disliked,
             'title' => $post->title,
+            'breadcrumbs' => [
+                ['Posts', '/posts'],
+                [$post->title, ''],
+            ],
         ]);
     }
 
@@ -143,6 +148,11 @@ class PostController extends Controller
                 'post' => $post,
                 'tags' => Tag::all(),
                 'title' => "Edit $post->title",
+                'breadcrumbs' => [
+                    ['Posts', '/posts'],
+                    [$post->title, "/posts/$post->id"],
+                    ["Edit $post->title", ''],
+                ],
             ]);
         } else {
             return redirect()
@@ -208,6 +218,10 @@ class PostController extends Controller
         return view('posts.index', [
             'posts' => $tag->posts()->paginate(self::$paginate),
             'title' => 'Sort by Tag'.' '.$tag->name,
+            'breadcrumbs' => [
+                ['Posts', '/posts'],
+                ["Sort by Tag $tag->name", ""],
+            ],
         ]);
     }
     
@@ -215,6 +229,9 @@ class PostController extends Controller
         return view('posts.index', [
             'posts' => Post::orderBy('created_at', 'desc')->paginate(self::$paginate),
             'title' => 'Order by Created Date',
+            'breadcrumbs' => [
+                ["Order by Created Data", ""],
+            ],
         ]);
     }
 
@@ -222,6 +239,9 @@ class PostController extends Controller
         return view('posts.index', [
             'posts' => Post::orderBy('views', 'desc')->paginate(self::$paginate),
             'title' => 'Order by Views',
+            'breadcrumbs' => [
+                ["Order by Views", ""],
+            ],
         ]);
     }
 
@@ -229,6 +249,9 @@ class PostController extends Controller
         return view('posts.index', [
             'posts' => Post::orderBy('likes', 'desc')->paginate(self::$paginate),
             'title' => 'Order by Likes',
+            'breadcrumbs' => [
+                ["Order by Likes", ""],
+            ],
         ]);
     }
 
@@ -236,58 +259,79 @@ class PostController extends Controller
         return view('posts.index', [
             'posts' => Post::orderByDesc('comments')->paginate(self::$paginate),
             'title' => 'Order by Comments',
+            'breadcrumbs' => [
+                ["Order by Comments", ""],
+            ],
         ]);
     }
 
-    public function like(Request $request)
-    {
+    public function like(Request $request) {
         $post = Post::findOrFail($request->input('post_id'));
-        $record = Like::firstOrCreate([
+        
+        $like = Like::where([
             'post_id' => $post->id,
             'user_id' => Auth::id(),
-        ]);
+        ])->get();
 
-        if (!$record->is_liked && !$record->is_disliked) {
-            $record->is_liked = true;
+        $dislike = Dislike::where([
+            'post_id' => $post->id,
+            'user_id' => Auth::id(),
+        ])->get();
+
+        if(!$like->count() && !$dislike->count()) {
+            // add new like
+            Like::create(['post_id' => $post->id, 'user_id' => Auth::id()]);
             $post->likes++;
-        } elseif (!$record->is_liked && $record->is_disliked) {
-            $record->is_liked = true;
-            $record->is_disliked = false;
-            $post->likes++;
-            $post->dislikes--;
-        } elseif ($record->is_liked && !$record->is_disliked) {
-            $record->is_liked = false;
+        } elseif ($like->count() && !$dislike->count()) {
+            // remove like
+            $like->first()->delete();
             $post->likes--;
+        } elseif (!$like->count() && $dislike->count()) {
+            // add new like
+            Like::create(['post_id' => $post->id, 'user_id' => Auth::id()]);
+            $post->likes++;
+            
+            // remove dislike
+            $dislike->first()->delete();
+            $post->dislikes--;
         }
 
-        $record->save();
         $post->save();
 
         return redirect()->route('posts.show', $post->id);
     }
     
-    public function dislike(Request $request) 
-    {
+    public function dislike(Request $request) {
         $post = Post::findOrFail($request->input('post_id'));
-        $record = Like::firstOrCreate([
+        
+        $like = Like::where([
             'post_id' => $post->id,
             'user_id' => Auth::id(),
-        ]);
-        
-        if (!$record->is_liked && !$record->is_disliked) {
-            $record->is_disliked = true;
+        ])->get();
+
+        $dislike = Dislike::where([
+            'post_id' => $post->id,
+            'user_id' => Auth::id(),
+        ])->get();
+
+        if(!$like->count() && !$dislike->count()) {
+            // add new dislike
+            Dislike::create(['post_id' => $post->id, 'user_id' => Auth::id()]);
             $post->dislikes++;
-        } elseif (!$record->is_liked && $record->is_disliked) {
-            $record->is_disliked = false;
+        } elseif (!$like->count() && $dislike->count()) {
+            // remove dislike
+            $dislike->first()->delete();
             $post->dislikes--;
-        } elseif ($record->is_liked && !$record->is_disliked) {
-            $record->is_disliked = true;
-            $record->is_liked = false;
+        } elseif ($like->count() && !$dislike->count()) {
+            // add new dislike
+            Dislike::create(['post_id' => $post->id, 'user_id' => Auth::id()]);
             $post->dislikes++;
+            
+            // remove like
+            $like->first()->delete();
             $post->likes--;
         }
-
-        $record->save();
+        
         $post->save();
 
         return redirect()->route('posts.show', $post->id);
