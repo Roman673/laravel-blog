@@ -9,16 +9,18 @@
 	<p class="lead"><a class="text-light" href="#" role="button">Learn more &raquo;</a></p>
 </div>
 
-<!-- Example row of columns -->
 <div class="card-columns">
   @foreach ($posts as $post)
     <div class="card">
+      @if ($post->cover_image)
+        <img src="/storage/cover_images/{{ $post->cover_image }}" class="card-img-top" alt="{{ $post->cover_image }}">
+      @endif
       <div class="card-body">
         @foreach($post->tags as $tag)
           <span class="btn btn-sm btn-outline-{{ $tag->status }} mb-2">{{ $tag->name }}</span>
         @endforeach
         <h5 class="card-title">{{ $post->title }}</h5>
-        <div class"card-text">{!! $post->body !!}</div>
+        <div class="card-text">{!! str_limit($post->body, $limit=150, $end='...') !!}</div>
         <p class="card-text">
           <a class="btn btn-secondary" href="{{ route('posts.show', $post->id) }}" role="button">
             View details &raquo;
@@ -30,5 +32,5 @@
       </div>
     </div>
     @endforeach
-</div> <!-- /.card-coluns -->
+</div>
 @endsection

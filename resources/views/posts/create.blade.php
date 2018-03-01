@@ -6,7 +6,7 @@
     <div class="card card-default">
       <div class="card-header">Create Post</div>
       <div class="card-body">
-        <form action="{{ route('posts.store') }}" method="post">
+        <form action="{{ route('posts.store') }}" method="post" enctype="multipart/form-data">
           @csrf
           <div class="form-group">
             <label for="tags" ><b>Status</b></label>
@@ -37,6 +37,11 @@
               </span>
             @endif
           </div> <!-- /.form-group -->
+          
+          <div class="form-group">
+            <label for="cover_image">Cover Image</label>
+            <input id="cover_image" class="form-control-file" type="file" name="cover_image">
+          </div>
 
           <button class="btn btn-primary" type="submit">Submit</button>
 

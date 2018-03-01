@@ -6,7 +6,7 @@
     <div class="card card-default">
       <div class="card-header">Edit {{ $post->title }}</div>
       <div class="card-body">
-        <form action="{{ route('posts.update', $post->id) }}" method="post">
+        <form action="{{ route('posts.update', $post->id) }}" method="post" enctype="multipart/form-data">
           @csrf
           @method('PUT')
           <div class="form-group">
@@ -53,6 +53,11 @@
             @endif
           </div> <!-- /.form-group -->
           
+          <div class="form-group">
+            <label for="cover_image">Cover Image</label>
+            <input id="cover_image" class="form-control-file" type="file" name="cover_image">
+          </div>
+
           <button class="btn btn-primary" type="submit">Submit</button>
 
         </form>

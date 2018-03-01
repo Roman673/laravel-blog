@@ -24,6 +24,7 @@ class TagController extends Controller
             'tags' => Tag::all(),
             'title' => 'Tags',
             'breadcrumbs' => [
+                ['Home', '/'],
                 ['Tags', ''],
             ],
         ]);
@@ -51,6 +52,7 @@ class TagController extends Controller
             'statuses' => $statuses,
             'title' => 'Creating tag',
             'breadcrumbs' => [
+                ['Home', '/'],
                 ['Tags', '/tags'],
                 ['Creating tag', ''],
             ],

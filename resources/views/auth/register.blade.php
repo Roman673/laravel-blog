@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 <?php $title = 'Register'; ?>
-<?php $breadcrumbs = [['Register', ''],]; ?>
+<?php $breadcrumbs = [['Home', '/'], ['Register', ''],]; ?>
 
 @section('content')
 <section class="row">

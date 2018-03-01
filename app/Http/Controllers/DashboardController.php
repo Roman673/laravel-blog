@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Dislike;
 use App\Like;
-
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -32,6 +31,7 @@ class DashboardController extends Controller
             'disliked_posts' => Dislike::where('user_id', auth()->user()->id)->get(),
             'title' => 'Home Page',
             'breadcrumbs' => [
+                ['Home', '/'],
                 ['Dashboard', ''],
             ],
         ]);

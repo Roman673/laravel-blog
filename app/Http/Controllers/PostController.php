@@ -8,9 +8,8 @@ use App\Like;
 use App\Post;
 use App\Tag;
 use App\View;
-
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -48,6 +47,7 @@ class PostController extends Controller
             'posts' => $posts,
             'title' => 'Posts',
             'breadcrumbs' => [
+                ['Home', '/'],
                 ['Posts', ''],
             ],
         ]);
@@ -64,6 +64,7 @@ class PostController extends Controller
             'tags' => Tag::all(),
             'title' => 'Creating post',
             'breadcrumbs' => [
+                ['Home', '/'],
                 ['Creating post', ''],
             ],
         ]);
@@ -80,14 +81,22 @@ class PostController extends Controller
         $this->validate($request, [
             'title' => 'required|unique:posts|max:191',
             'body' => 'required',
+            'cover_image' => 'image|nullable|max:1999',
         ]);
 
         $post = new Post;
         $post->title = $request->input('title');
         $post->body = $request->input('body');
         $post->user_id = $request->user()->id;
-        $post->save();
 
+        if ($request->hasFile('cover_image')) {
+            // Create file name like 707209956.jpg
+            $filename = rand() . '.' . $request->file('cover_image')->getClientOriginalExtension();
+            $path = $request->file('cover_image')->storeAs('public/cover_images', $filename);        
+            $post->cover_image = $filename;
+        }
+
+        $post->save();
         $post->tags()->attach($request->input('tags'));
 
         return redirect()
@@ -116,11 +125,13 @@ class PostController extends Controller
         $is_liked = 0;
         $is_disliked = 0;
 
-        if (Auth::check()) {
+        if (auth()->check()) {
             $is_liked = Like::where('post_id', $post->id)
-                          ->where('user_id', Auth::id())->count();
+                            ->where('user_id', auth()->user()->id)
+                            ->count();
             $is_disliked = Dislike::where('post_id', $post->id)
-                          ->where('user_id', Auth::id())->count();
+                                  ->where('user_id', auth()->user()->id)
+                                  ->count();
         }
 
         return view('posts.show', [
@@ -129,6 +140,7 @@ class PostController extends Controller
             'is_disliked' => $is_disliked,
             'title' => $post->title,
             'breadcrumbs' => [
+                ['Home', '/'],
                 ['Posts', '/posts'],
                 [$post->title, ''],
             ],
@@ -143,12 +155,13 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        if (Auth::id() == $post->user_id) {
+        if (auth()->user()->id == $post->user_id) {
             return view('posts.edit', [
                 'post' => $post,
                 'tags' => Tag::all(),
                 'title' => "Edit $post->title",
                 'breadcrumbs' => [
+                    ['Home', '/'],
                     ['Posts', '/posts'],
                     [$post->title, "/posts/$post->id"],
                     ["Edit $post->title", ''],
@@ -170,14 +183,23 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        if (Auth::id() == $post->user_id) {
+        if (auth()->user()->id == $post->user_id) {
             $this->validate($request, [
                 'title' => 'required|max:191',
                 'body' => 'required',
+                'cover_image' => 'image|nullable|max:1999',
             ]);
+
+            if ($request->hasFile('cover_image')) {
+                // Create file name like 707209956.jpg
+                $filename = rand() . '.' . $request->file('cover_image')->getClientOriginalExtension();
+                $path = $request->file('cover_image')->storeAs('public/cover_images', $filename);        
+                $post->cover_image = $filename;
+            }
 
             $post->title = $request->input('title');
             $post->body = $request->input('body');
+            $post->cover_image = $filename;
             $post->save();
 
             $post->tags()->detach();
@@ -201,16 +223,18 @@ class PostController extends Controller
      */
     public function destroy(Request $request, Post $post)
     {
-        if (Auth::id() == $post->user_id) {
-            $post->delete();
-
-            return redirect($request->input('redirectTo'))
-                ->with('success', 'Post deleted');
-        } else {
-            return redirect()
-                ->route('posts.show', $post->id)
-                ->with('error', 'Unauthorized Page');
+        if (auth()->user()->id !== $post->user_id) {
+            return redirect()->route('posts.show', $post->id)
+                             ->with('error', 'Unauthorized Page');
         }
+
+        if($post->cover_image) {
+            Storage::delete('public/cover_images/' . $post->cover_image); 
+        }
+
+        $post->delete();
+        return redirect($request->input('redirectTo'))
+            ->with('success', 'Post deleted');
     }
         
     public function sortByTag(Tag $tag)
@@ -219,6 +243,7 @@ class PostController extends Controller
             'posts' => $tag->posts()->paginate(self::$paginate),
             'title' => 'Sort by Tag'.' '.$tag->name,
             'breadcrumbs' => [
+                ['Home', '/'],
                 ['Posts', '/posts'],
                 ["Sort by Tag $tag->name", ""],
             ],
@@ -230,6 +255,7 @@ class PostController extends Controller
             'posts' => Post::orderBy('created_at', 'desc')->paginate(self::$paginate),
             'title' => 'Order by Created Date',
             'breadcrumbs' => [
+                ['Home', '/'],
                 ["Order by Created Data", ""],
             ],
         ]);
@@ -240,6 +266,7 @@ class PostController extends Controller
             'posts' => Post::orderBy('views', 'desc')->paginate(self::$paginate),
             'title' => 'Order by Views',
             'breadcrumbs' => [
+                ['Home', '/'],
                 ["Order by Views", ""],
             ],
         ]);
@@ -250,6 +277,7 @@ class PostController extends Controller
             'posts' => Post::orderBy('likes', 'desc')->paginate(self::$paginate),
             'title' => 'Order by Likes',
             'breadcrumbs' => [
+                ['Home', '/'],
                 ["Order by Likes", ""],
             ],
         ]);
@@ -260,6 +288,7 @@ class PostController extends Controller
             'posts' => Post::orderByDesc('comments')->paginate(self::$paginate),
             'title' => 'Order by Comments',
             'breadcrumbs' => [
+                ['Home', '/'],
                 ["Order by Comments", ""],
             ],
         ]);
@@ -270,17 +299,17 @@ class PostController extends Controller
         
         $like = Like::where([
             'post_id' => $post->id,
-            'user_id' => Auth::id(),
+            'user_id' => auth()->user()->id,
         ])->get();
 
         $dislike = Dislike::where([
             'post_id' => $post->id,
-            'user_id' => Auth::id(),
+            'user_id' => auth()->user()->id,
         ])->get();
 
         if(!$like->count() && !$dislike->count()) {
             // add new like
-            Like::create(['post_id' => $post->id, 'user_id' => Auth::id()]);
+            Like::create(['post_id' => $post->id, 'user_id' => auth()->user()->id]);
             $post->likes++;
         } elseif ($like->count() && !$dislike->count()) {
             // remove like
@@ -288,7 +317,7 @@ class PostController extends Controller
             $post->likes--;
         } elseif (!$like->count() && $dislike->count()) {
             // add new like
-            Like::create(['post_id' => $post->id, 'user_id' => Auth::id()]);
+            Like::create(['post_id' => $post->id, 'user_id' => auth()->user()->id]);
             $post->likes++;
             
             // remove dislike
@@ -306,17 +335,17 @@ class PostController extends Controller
         
         $like = Like::where([
             'post_id' => $post->id,
-            'user_id' => Auth::id(),
+            'user_id' => auth()->user()->id,
         ])->get();
 
         $dislike = Dislike::where([
             'post_id' => $post->id,
-            'user_id' => Auth::id(),
+            'user_id' => auth()->user()->id,
         ])->get();
 
         if(!$like->count() && !$dislike->count()) {
             // add new dislike
-            Dislike::create(['post_id' => $post->id, 'user_id' => Auth::id()]);
+            Dislike::create(['post_id' => $post->id, 'user_id' => auth()->user()->id]);
             $post->dislikes++;
         } elseif (!$like->count() && $dislike->count()) {
             // remove dislike
@@ -324,7 +353,7 @@ class PostController extends Controller
             $post->dislikes--;
         } elseif ($like->count() && !$dislike->count()) {
             // add new dislike
-            Dislike::create(['post_id' => $post->id, 'user_id' => Auth::id()]);
+            Dislike::create(['post_id' => $post->id, 'user_id' => auth()->user()->id]);
             $post->dislikes++;
             
             // remove like

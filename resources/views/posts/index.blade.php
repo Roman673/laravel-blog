@@ -20,6 +20,9 @@
         </h2>
         <div class="card-text">{!! str_limit($post->body, $limit=150, $end='...') !!}</div>
       </div>
+      @if ($post->cover_image)
+        <img src="/storage/cover_images/{{ $post->cover_image }}" class="img-fluid" alt="{{ $post->cover_image }}">
+      @endif
       <div class="card-footer border-light text-muted">
         <div class="d-flex w-100 justify-content-between">
           <div>

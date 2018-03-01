@@ -26,6 +26,9 @@
     
     <h1 class="mb-0">{{ $post->title }}</h1>
     <div class="h3 mb-2 text-muted">{{ $post->views }} views</div>
+    @if ($post->cover_image)
+      <img src="/storage/cover_images/{{ $post->cover_image }}" class="img-fluid" alt="{{ $post->cover_image }}">
+    @endif
     <p>{!! $post->body !!}</p>      
 
     <div class="d-flex w-100 justify-content-between">

@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Comment;
 use App\Post;
-
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
@@ -55,7 +53,7 @@ class CommentController extends Controller
         $comment = new Comment;
         $comment->body = $request->input('body');
         $comment->post_id = $post_id;
-        $comment->user_id = $request->user()->id;
+        $comment->user_id = auth()->user()->id;
         $comment->save();
 
         // Gettin post and increment comments counter
@@ -110,7 +108,7 @@ class CommentController extends Controller
      */
     public function destroy(Request $request, Comment $comment)
     {
-        if (Auth::id() == $comment->user_id) {
+        if (auth()->user()->id == $comment->user_id) {
             
             // Getting post and decriment comments counter
             $post = $comment->post;
