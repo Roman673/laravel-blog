@@ -22,6 +22,7 @@ class CreatePostsTable extends Migration
             $table->integer('views')->unsigned()->default(0);
             $table->integer('comments')->unsigned()->default(0);
             $table->timestamps();
+            $table->string('cover_image')->nullable();
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')
                 ->references('id')

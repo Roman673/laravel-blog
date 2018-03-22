@@ -199,7 +199,6 @@ class PostController extends Controller
 
             $post->title = $request->input('title');
             $post->body = $request->input('body');
-            $post->cover_image = $filename;
             $post->save();
 
             $post->tags()->detach();
